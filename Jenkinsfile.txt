@@ -25,7 +25,7 @@ pipeline {
               pwd
               helm version
               LINES=`docker images | grep \${IMAGE_REPO_NAME} | grep \${BUILD_NUMBER} | wc -l`
-              if [[ $LINES -eq 1 ]]
+              if [[ $LINES -ge 1 ]]
               then
                 echo "IMAGE IS HERE!!!!!"
               else
