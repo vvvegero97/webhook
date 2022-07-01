@@ -12,13 +12,6 @@ pipeline {
     APP_NAME           = "my-webapp"
   }
   stages {
-    // stage('Delete workspace before build starts') {
-    //     steps{
-    //         echo 'Deleting workspace'
-    //         deleteDir()
-    //     }
-    // }
-
     stage('Build docker image and run tests') {
         steps{
           dir('webapp') {
@@ -27,7 +20,7 @@ pipeline {
               '''
           }
           sh '''
-              echo 'This is ${GIT_BRANCH} branch. Commit: ${GIT_COMMIT}.'
+              echo 'This is \${GIT_BRANCH} branch. Commit: \${GIT_COMMIT}.'
               ls -la 
               pwd
               helm version
@@ -65,14 +58,14 @@ pipeline {
               echo "Chart bucket: \${CHART_S3}"
               echo "Contents of bucket: "
               aws s3 ls \${CHART_S3}
-              helm s3 init s3://vegero-helm-charts/stable/myapp
+              #helm s3 init s3://vegero-helm-charts/stable/myapp
               helm repo add stable-myapp s3://vegero-helm-charts/stable/myapp
-              helm repo update #${CHART_REPO} s3://vegero-helm-charts/stable/myapp
+              helm repo update
               helm repo list
               sed -i "s/app-name/\${APP_NAME}/g" ./Chart.yaml
               cat ./Chart.yaml
               sed -i "s!sampleimage!${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}!g" ./values.yaml
-              sed -i "s/default/${BUILD_NUMBER}-app-ns/g" ./values.yaml
+              sed -i "s/default/${BUILD_NUMBER}-app/g" ./values.yaml
               cat ./values.yaml
           '''
         }
@@ -80,22 +73,23 @@ pipeline {
             helm package ./app-chart
             ls -la
             VERSION=`cat ./app-chart/Chart.yaml | grep version | awk '{print $3}'`
-            #helm s3 push ./${APP_NAME}-${VERSION}.tgz ${CHART_REPO} --force
-            #helm repo update && helm search repo ${CHART_REPO}             
+            helm s3 push ./${APP_NAME}-${VERSION}.tgz ${CHART_REPO} --force
+            helm repo update && helm search repo ${CHART_REPO}             
         '''
       }
     }
-    // stage('Deploy new chart to AWS EKS'){
-    //   steps{
-    //     withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECRED')]) {
-    //       sh 'cat $KUBECRED > ~/.kube/config'
-    //     }
-    //     sh '''
-    //       helm version
-    //       helm upgrade --install jenkins-webapp ${CHART_REPO}/${APP_NAME} --namespace default --cleanup-on-fail --wait
-    //       echo "Deployment Successful !!!"
-    //     '''
-    //   }
-    // }
+    stage('Deploy new chart to AWS EKS'){
+      steps{
+        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECRED')]) {
+          sh 'cat $KUBECRED > ~/.kube/config'
+        }
+        sh '''
+          helm version
+          #helm upgrade --install jenkins-webapp ${CHART_REPO}/${APP_NAME} --namespace default --cleanup-on-fail --wait
+          cat ~/.kube/config
+          echo "Deployment Successful !!!"
+        '''
+      }
+    }
   }
 }
