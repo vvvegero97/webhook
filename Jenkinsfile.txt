@@ -91,5 +91,17 @@ pipeline {
         '''
       }
     }
+    post {
+      failure {
+        emailext body: '\${JOB_NAME} build \${BUILD_NUMBER} Failed !!!',
+        subject: 'Jenkins \${JOB_NAME}',
+        to: 'vvvegero97@gmail.com'
+      }
+      success {
+        emailext body: '\${JOB_NAME} build \${BUILD_NUMBER} Succeeded !!!',
+        subject: 'Jenkins \${JOB_NAME}',
+        to: 'vvvegero97@gmail.com'
+      }
+    }
   }
 }
