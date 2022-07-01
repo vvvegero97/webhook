@@ -12,12 +12,12 @@ pipeline {
     APP_NAME           = "my-webapp"
   }
   stages {
-    stage('Delete workspace before build starts') {
-        steps{
-            echo 'Deleting workspace'
-            deleteDir()
-        }
-    }
+    // stage('Delete workspace before build starts') {
+    //     steps{
+    //         echo 'Deleting workspace'
+    //         deleteDir()
+    //     }
+    // }
 
     stage('Build docker image and run tests') {
         steps{
