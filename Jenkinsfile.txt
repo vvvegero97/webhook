@@ -59,7 +59,7 @@ pipeline {
             // }
             branch "main"
           }
-          git branch: 'main', credentialsId: 'GitHub-SSH', url: 'git@github.com:vvvegero97/CI_CD_aws_eks.git'
+          git branch: 'main', credentialsId: '', url: 'https://github.com/vvvegero97/webhook.git'
           sh '''
               echo 'This is MAIN branch.'
               pwd
@@ -73,7 +73,7 @@ pipeline {
           when {
             changeRequest target: "main"
           }
-          git branch: 'dev', credentialsId: 'GitHub-SSH', url: 'git@github.com:vvvegero97/CI_CD_aws_eks.git'
+          git branch: 'dev', credentialsId: '', url: 'https://github.com/vvvegero97/webhook.git'
           sh '''
               echo 'This is DEV branch.'
               pwd
