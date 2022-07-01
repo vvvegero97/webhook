@@ -38,12 +38,9 @@ pipeline {
     stage('Tag docker image, Push images to ECR and delete Local images') {
         steps{
           sh '''
-              docker image tag \${AWS_ACCOUNT_ID}.dkr.ecr.\${AWS_DEFAULT_REGION}.amazonaws.com/\${IMAGE_REPO_NAME}:\${BUILD_NUMBER} \${AWS_ACCOUNT_ID}.dkr.ecr.\${AWS_DEFAULT_REGION}.amazonaws.com/\${IMAGE_REPO_NAME}:\${IMAGE_TAG}
               aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin \${AWS_ACCOUNT_ID}.dkr.ecr.\${AWS_DEFAULT_REGION}.amazonaws.com
-              docker push \${AWS_ACCOUNT_ID}.dkr.ecr.\${AWS_DEFAULT_REGION}.amazonaws.com/\${IMAGE_REPO_NAME}:${IMAGE_TAG}
               docker push \${AWS_ACCOUNT_ID}.dkr.ecr.\${AWS_DEFAULT_REGION}.amazonaws.com/\${IMAGE_REPO_NAME}:${BUILD_NUMBER}
               echo Build number is \${BUILD_NUMBER}
-              docker rmi \${AWS_ACCOUNT_ID}.dkr.ecr.\${AWS_DEFAULT_REGION}.amazonaws.com/\${IMAGE_REPO_NAME}:\${IMAGE_TAG}
               docker rmi \${AWS_ACCOUNT_ID}.dkr.ecr.\${AWS_DEFAULT_REGION}.amazonaws.com/\${IMAGE_REPO_NAME}:\${BUILD_NUMBER}
               docker image prune -f
               echo CI PIPELINE SUCCESSFUL !!!
