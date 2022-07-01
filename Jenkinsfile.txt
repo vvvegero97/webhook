@@ -52,35 +52,35 @@ pipeline {
     }
     stage('Checkout main') {
         steps{
-          when {
-            // anyOf {
-            //   equals(actual: ${IS_MERGE}, expected: 1)
-            //   equals(actual: ${IS_PUSH}, expected: 1)
-            // }
-            branch "main"
-          }
-          git branch: 'main', credentialsId: '', url: 'https://github.com/vvvegero97/webhook.git'
+          // when {
+          //   // anyOf {
+          //   //   equals(actual: ${IS_MERGE}, expected: 1)
+          //   //   equals(actual: ${IS_PUSH}, expected: 1)
+          //   // }
+          //   branch "main"
+          // }
+          // git branch: 'main', credentialsId: '', url: 'https://github.com/vvvegero97/webhook.git'
           sh '''
-              echo 'This is MAIN branch.'
+              echo "This is ${GIT_BRANCH} branch."
               pwd
               ls -la
           '''        
         }
     }
 
-    stage('Checkout dev') {
-        steps{
-          when {
-            changeRequest target: "main"
-          }
-          git branch: 'dev', credentialsId: '', url: 'https://github.com/vvvegero97/webhook.git'
-          sh '''
-              echo 'This is DEV branch.'
-              pwd
-              ls -la
-          '''      
-        }
-    }
+    // stage('Checkout dev') {
+    //     steps{
+    //       // when {
+    //       //   changeRequest target: "main"
+    //       // }
+    //       git branch: 'dev', credentialsId: '', url: 'https://github.com/vvvegero97/webhook.git'
+    //       sh '''
+    //           echo 'This is DEV branch.'
+    //           pwd
+    //           ls -la
+    //       '''      
+    //     }
+    // }
 
     // stage('Build docker image and run tests') {
     //     steps{
